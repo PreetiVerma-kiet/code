@@ -34,3 +34,58 @@ public class BookIssueApp extends Thread{
 	}
 	
 }
+------------------------------------------------------------------Thread Inter Communication-----------------------------------------------------------------
+
+lass SharedData {
+    int number;
+    boolean available = false;
+
+    synchronized void produce(int value) {
+        try {
+            while (available) {
+                wait(); // Wait until the number is consumed
+            }
+            number = value;
+            available = true;
+            System.out.println("Produced: " + number);
+            notify(); // Notify the consumer
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    synchronized void consume() {
+        try {
+            while (!available) {
+                wait(); // Wait until the number is produced
+            }
+            System.out.println("Consumed: " + number);
+            available = false;
+            notify(); // Notify the producer
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+
+public class InterThreadCommunicationExample {
+    public static void main(String[] args) {
+        SharedData data = new SharedData();
+
+        Thread producer = new Thread(() -> {
+            for (int i = 1; i <= 5; i++) {
+                data.produce(i);
+            }
+        });
+
+        Thread consumer = new Thread(() -> {
+            for (int i = 1; i <= 5; i++) {
+                data.consume();
+            }
+        });
+
+        producer.start();
+        consumer.start();
+    }
+}
+
