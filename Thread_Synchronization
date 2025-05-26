@@ -1,0 +1,36 @@
+class Booking {
+	int total_books=10;
+	 public void issueBooks(int books){
+	
+		if(total_books>= books) {
+			System.out.println("books issued successfully");
+			total_books-= books;
+		
+			System.out.println("books left"+total_books);
+			
+		}
+		else {
+			System.out.println("bookes can not be issued");
+			System.out.println("total left books is" + total_books);
+		}
+				}
+
+}
+public class BookIssueApp extends Thread{
+	static Booking b;
+	int No_Books;
+	public void run() {
+		b.issueBooks(No_Books);
+		}
+	public static void main(String args[]) {
+		b=new Booking();
+		BookIssueApp t1 =new BookIssueApp();
+		BookIssueApp t2 =new BookIssueApp();
+		t1.No_Books=7;
+		t2.No_Books=8;
+		t1.start();
+		t2.start();
+		
+	}
+	
+}
